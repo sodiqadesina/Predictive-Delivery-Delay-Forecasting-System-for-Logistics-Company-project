@@ -16,12 +16,12 @@
 
     <dependencies>
         <!-- Weka for Machine Learning -->
-        <dependency>
-            <groupId>nz.ac.waikato.cms.weka</groupId>
-            <artifactId>weka-stable</artifactId>
-            <version>3.8.0</version>
-            <scope>compile</scope>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>nz.ac.waikato.cms.weka</groupId> -->
+<!--             <artifactId>weka-stable</artifactId> -->
+<!--             <version>3.8.0</version> -->
+<!--             <scope>compile</scope> -->
+<!--         </dependency> -->
         
         <!-- JPA (Persistence API) -->
         <dependency>
@@ -52,12 +52,13 @@
         </dependency>
         
         <!-- MySQL Connector -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.32</version>
-            <scope>runtime</scope>
-        </dependency>
+		<dependency>
+		    <groupId>com.mysql</groupId>
+		    <artifactId>mysql-connector-j</artifactId>
+		    <version>8.0.32</version>
+		    <scope>runtime</scope>
+		</dependency>
+
         
         <!-- Apache Commons Codec (Optional, if required in ML utilities) -->
         <dependency>
@@ -78,7 +79,21 @@
             <version>1.7.36</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+		    <groupId>jakarta.servlet</groupId>
+		    <artifactId>jakarta.servlet-api</artifactId>
+		    <version>5.0.0</version> <!-- Add this version -->
+		    <scope>provided</scope>
+		</dependency>
+        
     </dependencies>
+	<repositories>
+	    <repository>
+	        <id>weka-repo</id>
+	        <url>https://repository.weka.com/maven/</url>
+	    </repository>
+	</repositories>
+
 
     <build>
         <plugins>
