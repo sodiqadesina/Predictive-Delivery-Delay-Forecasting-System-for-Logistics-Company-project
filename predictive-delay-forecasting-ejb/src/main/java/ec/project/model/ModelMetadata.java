@@ -8,24 +8,11 @@ import javax.persistence.Id;
 @Entity
 public class ModelMetadata {
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name;         // Model name
-    private String path;         // Path to the model file
-    private String type;         // Model type (e.g., Linear Regression, Decision Tree)
-    private String createdBy;    // User who created the model
-    private String createdAt;    // Timestamp of model creation
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private String name;
+    private Blob modelBlob;
+    private String performanceMetrics;
 
     public String getName() {
         return name;
@@ -35,35 +22,20 @@ public class ModelMetadata {
         this.name = name;
     }
 
-    public String getPath() {
-        return path;
+    @Lob
+    public Blob getModelBlob() {
+        return modelBlob;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setModelBlob(Blob modelBlob) {
+        this.modelBlob = modelBlob;
     }
 
-    public String getType() {
-        return type;
+    public String getPerformanceMetrics() {
+        return performanceMetrics;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+    public void setPerformanceMetrics(String performanceMetrics) {
+        this.performanceMetrics = performanceMetrics;
     }
 }
