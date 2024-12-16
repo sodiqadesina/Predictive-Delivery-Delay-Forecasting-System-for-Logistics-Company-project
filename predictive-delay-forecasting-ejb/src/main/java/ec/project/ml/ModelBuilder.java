@@ -2,7 +2,6 @@ package ec.project.ml;
 
 import ec.project.dao.ModelDAO;
 import ec.project.model.ModelMetadata;
-
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
@@ -17,15 +16,15 @@ import java.io.ObjectOutputStream;
 import java.sql.Blob;
 import javax.sql.rowset.serial.SerialBlob;
 
-
-
 @Stateless
 public class ModelBuilder {
 
     @Inject
     private ModelDAO modelDAO;
 
-    public void trainAndSaveModels(String trainingDataPath, String testDataPath) {
+    public void trainAndSaveModels( ) {
+    	String trainingDataPath = 'C:/enterprise/workspace/project/Project/Ec-project/data/train_shipment_data.arff'
+    	String testDataPath = 'C:/enterprise/workspace/project/Project/Ec-project/data/test_shipment_data.arf'
         try {
             // Load training and test data
             Instances trainingData = DataSource.read(trainingDataPath);
@@ -86,5 +85,7 @@ public class ModelBuilder {
 
         } catch (Exception e) {
             System.err.println("Error training or saving models: " + e.getMessage());
-
+            e.printStackTrace();
+        }
+    }
 }

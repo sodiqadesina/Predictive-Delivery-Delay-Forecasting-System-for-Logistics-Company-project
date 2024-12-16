@@ -1,7 +1,6 @@
 package ec.project.ml;
 
 import ec.project.dao.ModelDAO;
-
 import ec.project.dao.ShipmentDAO;
 import ec.project.model.ModelMetadata;
 import ec.project.model.Shipment;
@@ -13,7 +12,6 @@ import weka.core.converters.ConverterUtils.DataSource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
-
 import java.io.ObjectInputStream;
 
 @Stateless
@@ -22,18 +20,12 @@ public class ModelPredictor {
     @Inject
     private ModelDAO modelDAO;
 
-
     @Inject
     private ShipmentDAO shipmentDAO;
 
     public double predictLateDeliveryRisk(String modelName, Long shipmentId) {
         try {
             // Load the model metadata from the database
-
-    public double predict(String modelName, String inputDataPath) {
-        try {
-            // Get model metadata
-
             ModelMetadata metadata = modelDAO.getModelByName(modelName);
             if (metadata == null) {
                 throw new RuntimeException("Model not found: " + modelName);
@@ -52,7 +44,7 @@ public class ModelPredictor {
             }
 
             // Prepare the data instance for prediction
-            Instances dataSet = DataSource.read("c://enterprise/tmp/shipment.arff");
+            Instances dataSet = DataSource.read("C:/enterprise/workspace/project/Project/Ec-project/data/test_shipment_data.arff");
             dataSet.setClassIndex(dataSet.numAttributes() - 1);
 
             Instance instance = dataSet.firstInstance(); // Placeholder for actual instance mapping
@@ -70,7 +62,6 @@ public class ModelPredictor {
         } catch (Exception e) {
             e.printStackTrace();
             return Double.NaN; // Return NaN to indicate an error
-
         }
     }
 }
