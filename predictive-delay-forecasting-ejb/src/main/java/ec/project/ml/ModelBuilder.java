@@ -2,6 +2,7 @@ package ec.project.ml;
 
 import ec.project.dao.ModelDAO;
 import ec.project.model.ModelMetadata;
+
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
@@ -15,6 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Blob;
 import javax.sql.rowset.serial.SerialBlob;
+
+
 
 @Stateless
 public class ModelBuilder {
@@ -83,7 +86,5 @@ public class ModelBuilder {
 
         } catch (Exception e) {
             System.err.println("Error training or saving models: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+
 }

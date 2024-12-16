@@ -55,8 +55,8 @@
         </dependency>
         <!-- Weka for ML -->
         <dependency>
-            <groupId>nz.ac.waikato.cms.weka</groupId>
-            <artifactId>weka-dev</artifactId>
+           <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>weka-stable</artifactId>
             <version>${weka.version}</version>
         </dependency>
         <!-- MySQL Connector -->

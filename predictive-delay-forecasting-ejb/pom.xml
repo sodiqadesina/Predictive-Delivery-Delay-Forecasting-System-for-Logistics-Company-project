@@ -16,12 +16,12 @@
 
     <dependencies>
         <!-- Weka for Machine Learning -->
-<!--         <dependency> -->
-<!--             <groupId>nz.ac.waikato.cms.weka</groupId> -->
-<!--             <artifactId>weka-stable</artifactId> -->
-<!--             <version>3.8.0</version> -->
-<!--             <scope>compile</scope> -->
-<!--         </dependency> -->
+        <dependency>
+            <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>weka-stable</artifactId>
+            <version>3.8.0</version>
+            <scope>compile</scope>
+        </dependency>
         
         <!-- JPA (Persistence API) -->
         <dependency>
@@ -87,12 +87,7 @@
 		</dependency>
         
     </dependencies>
-	<repositories>
-	    <repository>
-	        <id>weka-repo</id>
-	        <url>https://repository.weka.com/maven/</url>
-	    </repository>
-	</repositories>
+
 
 
     <build>
