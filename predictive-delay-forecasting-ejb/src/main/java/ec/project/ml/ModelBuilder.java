@@ -1,53 +1,89 @@
-//package ec.project.ml;
-//
-//import ec.project.dao.ModelDAO;
-//import ec.project.model.ModelMetadata;
-//import nz.ac.waikato.cms.weka.classifiers.Classifier;
-//import nz.ac.waikato.cms.weka.core.Instances;
-//import nz.ac.waikato.cms.weka.core.converters.ConverterUtils.DataSource;
-//
-//import javax.ejb.Stateless;
-//import javax.inject.Inject;
-//import java.io.File;
-//import java.io.ObjectOutputStream;
-//import java.io.FileOutputStream;
-//
-//@Stateless
-//public class ModelBuilder {
-//
-//    @Inject
-//    private ModelDAO modelDAO;
-//
-//    public void trainModel(String modelName, String trainingDataPath) {
-//        try {
-//            // Load training data
-//            DataSource source = new DataSource(trainingDataPath);
-//            Instances trainingData = source.getDataSet();
-//            trainingData.setClassIndex(trainingData.numAttributes() - 1); // Set the class attribute
-//
-//            // Train the model (Example: Linear Regression)
-//            Classifier model = new nz.ac.waikato.cms.weka.classifiers.functions.LinearRegression();
-//            model.buildClassifier(trainingData);
-//
-//            // Save the model to a file
-//            String modelPath = "models/" + modelName + ".bin";
-//            File modelFile = new File(modelPath);
-//            modelFile.getParentFile().mkdirs();
-//            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(modelFile))) {
-//                out.writeObject(model);
-//            }
-//
-//            // Save model metadata to the database
-//            ModelMetadata metadata = new ModelMetadata();
-//            metadata.setName(modelName);
-//            metadata.setPath(modelPath);
-//            metadata.setType("Linear Regression");
-//            metadata.setCreatedBy("system"); // You can replace this with the logged-in user
-//            metadata.setCreatedAt(java.time.LocalDateTime.now().toString());
-//            modelDAO.addModel(metadata);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//}
+package ec.project.ml;
+
+import ec.project.dao.ModelDAO;
+import ec.project.model.ModelMetadata;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.trees.J48;
+import weka.classifiers.trees.RandomForest;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.sql.Blob;
+import javax.sql.rowset.serial.SerialBlob;
+
+@Stateless
+public class ModelBuilder {
+
+    @Inject
+    private ModelDAO modelDAO;
+
+    public void trainAndSaveModels(String trainingDataPath, String testDataPath) {
+        try {
+            // Load training and test data
+            Instances trainingData = DataSource.read(trainingDataPath);
+            trainingData.setClassIndex(trainingData.numAttributes() - 1);
+
+            Instances testData = DataSource.read(testDataPath);
+            testData.setClassIndex(testData.numAttributes() - 1);
+
+            // Initialize classifiers
+            Classifier[] classifiers = {
+                new J48(),           // Decision Tree
+                new RandomForest()   // Random Forest
+            };
+
+            String[] algorithmNames = { "Decision Tree", "Random Forest" };
+
+            for (int i = 0; i < classifiers.length; i++) {
+                Classifier classifier = classifiers[i];
+                String algorithmName = algorithmNames[i];
+
+                // Configure specific settings for each classifier
+                if (classifier instanceof J48) {
+                    ((J48) classifier).setUnpruned(true);
+                } else if (classifier instanceof RandomForest) {
+                    ((RandomForest) classifier).setNumIterations(100);
+                }
+
+                // Train the model
+                classifier.buildClassifier(trainingData);
+
+                // Evaluate the model
+                Evaluation evaluation = new Evaluation(trainingData);
+                evaluation.evaluateModel(classifier, testData);
+
+                // Collect performance metrics
+                String summary = evaluation.toSummaryString();
+                double accuracy = evaluation.pctCorrect();
+
+                // Serialize the model into a byte array
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+                    objectOutputStream.writeObject(classifier);
+                }
+                byte[] modelBytes = byteArrayOutputStream.toByteArray();
+
+                // Convert byte array to BLOB
+                Blob modelBlob = new SerialBlob(modelBytes);
+
+                // Save metadata and model BLOB to the database
+                ModelMetadata metadata = new ModelMetadata();
+                metadata.setName(algorithmName + "_Model");
+                metadata.setModelBlob(modelBlob);
+                metadata.setPerformanceMetrics("Accuracy: " + accuracy + "%\n" + summary);
+                modelDAO.addModel(metadata);
+
+                System.out.println("Model trained, tested, and saved to database: " + algorithmName);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error training or saving models: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
