@@ -1,46 +1,33 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>Model Selection</title>
-    <link rel="stylesheet" href="../resources/css/styles.css">
 </head>
 <body>
-    <h1>Model Selection</h1>
-    
-    <form action="${pageContext.request.contextPath}/admin/modelSelection" method="post">
-        <label for="modelName">Select a Model to Deploy:</label>
-        <select name="modelName" id="modelName" required>
-            <%
-                // Retrieve models from the request scope
-                java.util.List<ec.project.model.ModelMetadata> models = 
-                    (java.util.List<ec.project.model.ModelMetadata>) request.getAttribute("models");
-                if (models != null && !models.isEmpty()) {
-                    for (ec.project.model.ModelMetadata model : models) {
-            %>
-                <option value="<%= model.getName() %>"><%= model.getName() %> (Accuracy: <%= model.getPerformanceMetrics() %>)</option>
-            <%
-                    }
-                } else {
-            %>
-                <option disabled>No models available</option>
-            <%
-                }
-            %>
-        </select>
-        <br><br>
-        <input type="submit" value="Deploy Model">
+    <h2>Select Model to Deploy</h2>
+    <form action="ModelSelectionServlet" method="post">
+        <table border="1">
+            <tr>
+                <th>Model Name</th>
+                <th>Performance Metrics</th>
+                <th>Select</th>
+            </tr>
+            <c:forEach var="model" items="${models}">
+                <tr>
+                    <td>${model.name}</td>
+                    <td>${model.performanceMetrics}</td>
+                    <td>
+                        <input type="radio" name="selectedModel" value="${model.name}" required>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+        <br>
+        <input type="submit" value="Deploy Selected Model">
     </form>
-    
-    <%-- Display success message if set --%>
-    <%
-        String message = (String) request.getAttribute("message");
-        if (message != null) {
-    %>
-        <p style="color: green;"><%= message %></p>
-    <%
-        }
-    %>
-
-    <a href="landing.jsp">Back to Admin Dashboard</a>
+    <c:if test="${not empty error}">
+        <p style="color: red;">${error}</p>
+    </c:if>
 </body>
 </html>

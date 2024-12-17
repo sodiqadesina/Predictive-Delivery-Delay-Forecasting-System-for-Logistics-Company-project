@@ -1,5 +1,16 @@
-<form action="${pageContext.request.contextPath}/user/signup" method="post">
-    <label>Username: <input type="text" name="username" /></label><br/>
-    <label>Password: <input type="password" name="password" /></label><br/>
-    <input type="submit" value="Sign Up" />
-</form>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>User Signup</title>
+</head>
+<body>
+    <h2>User Signup</h2>
+    <form action="UserSignupServlet" method="post">
+        <label for="name">Username:</label>
+        <input type="text" name="name" id="name" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required><br><br>
+        <input type="submit" value="Signup">
+    </form>
+</body>
+</html>
