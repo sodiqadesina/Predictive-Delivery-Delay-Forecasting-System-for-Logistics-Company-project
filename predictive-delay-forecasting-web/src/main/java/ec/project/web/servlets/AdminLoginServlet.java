@@ -1,8 +1,6 @@
 package ec.project.web.servlets;
 
-import ec.project.model.User;
-import ec.project.web.dto.UserDTO;
-import ec.project.service.UserService;
+import ec.project.UserService;
 
 import javax.inject.Inject;
 import javax.servlet.*;
@@ -13,19 +11,16 @@ public class AdminLoginServlet extends HttpServlet {
     @Inject
     private UserService userService;
 
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
+        String name = request.getParameter("name");
         String password = request.getParameter("password");
 
-        User admin = userService.getUser(username, password);
-        if (admin != null && admin.getRole().equalsIgnoreCase("admin")) {
+        if (userService.validateAdmin(name, password)) {
             HttpSession session = request.getSession();
-            session.setAttribute("admin", admin);
-            response.sendRedirect(request.getContextPath() + "/admin/landing.jsp");
+            session.setAttribute("user", name);
+            response.sendRedirect("/admin/landing.jsp");
         } else {
-            request.setAttribute("error", "Invalid credentials");
-            request.getRequestDispatcher("/admin/login.jsp").forward(request, response);
+            response.sendRedirect("/admin/login.jsp?error=invalid");
         }
     }
 }

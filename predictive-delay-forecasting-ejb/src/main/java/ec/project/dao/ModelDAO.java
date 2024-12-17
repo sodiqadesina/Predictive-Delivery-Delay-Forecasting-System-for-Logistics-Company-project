@@ -7,5 +7,7 @@ public interface ModelDAO {
     void addModel(ModelMetadata model);
     ModelMetadata getModelByName(String modelName);
     List<ModelMetadata> getAllModels();
+    void updateModel(ModelMetadata model);
+    ModelMetadata getDeployedModel(); // Optional, fetch deployed model
     void deleteModel(String modelName);
 }

@@ -1,9 +1,10 @@
 package ec.project.dao;
 
+import ec.project.model.ModelMetadata;
+
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import ec.project.model.ModelMetadata;
 import java.util.List;
 
 @Stateful
@@ -43,6 +44,22 @@ public class ModelDAOImpl implements ModelDAO {
             }
         } catch (Exception e) {
             // Handle exception, e.g., model not found
+        }
+    }
+
+    @Override
+    public void updateModel(ModelMetadata model) {
+        em.merge(model); // Merge updates into the database
+    }
+
+    @Override
+    public ModelMetadata getDeployedModel() {
+        try {
+            return em.createQuery(
+                "SELECT m FROM ModelMetadata m WHERE m.deployed = true", ModelMetadata.class)
+                .getSingleResult();
+        } catch (Exception e) {
+            return null; // No deployed model found
         }
     }
 }

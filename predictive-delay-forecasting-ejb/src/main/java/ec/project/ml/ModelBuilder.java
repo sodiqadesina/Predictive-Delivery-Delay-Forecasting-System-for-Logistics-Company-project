@@ -21,7 +21,7 @@ import javax.ejb.Stateless;
 public class ModelBuilder {
 
     public void trainAndSaveModels() {
-    	 String datasetURL = "C:/enterprise/workspace/project/Ec-project/predictive-delay-forecasting-ejb/src/main/resources/data/shipment_data_clean.arff";
+    	 String datasetURL = "src/main/resources/data/shipment_data_clean.arff";
          String modelDirectoryPath = "C:/enterprise/tmp/model/project";
          int seed = 42; // Fixed seed for reproducibility
 

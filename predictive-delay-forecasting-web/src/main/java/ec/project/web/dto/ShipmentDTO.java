@@ -1,49 +1,22 @@
 package ec.project.web.dto;
 
 public class ShipmentDTO {
-    private String origin;
-    private String destination;
-    private double benefit;
-    private double sales;
+    private double latitude;
+    private double longitude;
+    private double benefitPerOrder;
+    private double salesPerCustomer;
 
     public ShipmentDTO() {}
 
-    public ShipmentDTO(String origin, String destination, double benefit, double sales) {
-        this.origin = origin;
-        this.destination = destination;
-        this.benefit = benefit;
-        this.sales = sales;
-    }
+    public double getLatitude() { return latitude; }
+    public void setLatitude(double latitude) { this.latitude = latitude; }
 
-    public String getOrigin() {
-        return origin;
-    }
+    public double getLongitude() { return longitude; }
+    public void setLongitude(double longitude) { this.longitude = longitude; }
 
-    public void setOrigin(String origin) {
-        this.origin = origin;
-    }
+    public double getBenefitPerOrder() { return benefitPerOrder; }
+    public void setBenefitPerOrder(double benefitPerOrder) { this.benefitPerOrder = benefitPerOrder; }
 
-    public String getDestination() {
-        return destination;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public double getBenefit() {
-        return benefit;
-    }
-
-    public void setBenefit(double benefit) {
-        this.benefit = benefit;
-    }
-
-    public double getSales() {
-        return sales;
-    }
-
-    public void setSales(double sales) {
-        this.sales = sales;
-    }
+    public double getSalesPerCustomer() { return salesPerCustomer; }
+    public void setSalesPerCustomer(double salesPerCustomer) { this.salesPerCustomer = salesPerCustomer; }
 }

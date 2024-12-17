@@ -12,11 +12,13 @@ public class ModelMetadata {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Changed to Long
+    private Long id;
 
     private String name; // Separate field for model name
     private Blob modelBlob;
     private String performanceMetrics;
+
+    private boolean deployed = false; // New field to track active/deployed model
 
     // Getters and Setters
     public Long getId() {
@@ -51,5 +53,12 @@ public class ModelMetadata {
     public void setPerformanceMetrics(String performanceMetrics) {
         this.performanceMetrics = performanceMetrics;
     }
-}
 
+    public boolean isDeployed() {
+        return deployed;
+    }
+
+    public void setDeployed(boolean deployed) {
+        this.deployed = deployed;
+    }
+}

@@ -1,7 +1,6 @@
 package ec.project.web.servlets;
 
-import ec.project.model.User;
-import ec.project.service.UserService;
+import ec.project.UserService;
 
 import javax.inject.Inject;
 import javax.servlet.*;
@@ -12,19 +11,16 @@ public class UserLoginServlet extends HttpServlet {
     @Inject
     private UserService userService;
 
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
+        String name = request.getParameter("name");
         String password = request.getParameter("password");
 
-        User user = userService.getUser(username, password);
-        if (user != null) {
+        if (userService.validateUser(name, password)) {
             HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            response.sendRedirect(request.getContextPath() + "/user/landing.jsp");
+            session.setAttribute("user", name);
+            response.sendRedirect("/user/landing.jsp");
         } else {
-            request.setAttribute("error", "Invalid credentials");
-            request.getRequestDispatcher("/user/login.jsp").forward(request, response);
+            response.sendRedirect("/user/login.jsp?error=invalid");
         }
     }
 }
