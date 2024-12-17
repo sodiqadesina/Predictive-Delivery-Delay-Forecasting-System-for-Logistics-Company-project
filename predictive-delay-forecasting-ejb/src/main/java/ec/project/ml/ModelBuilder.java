@@ -23,8 +23,8 @@ public class ModelBuilder {
     private ModelDAO modelDAO;
 
     public void trainAndSaveModels( ) {
-    	String trainingDataPath = 'C:/enterprise/workspace/project/Project/Ec-project/data/train_shipment_data.arff'
-    	String testDataPath = 'C:/enterprise/workspace/project/Project/Ec-project/data/test_shipment_data.arf'
+    	String trainingDataPath = "C:/enterprise/workspace/Ec-project/data/train_shipment_data.arff";
+    	String testDataPath = "C:/enterprise/workspace/project/Project/Ec-project/data/test_shipment_data.arf";
         try {
             // Load training and test data
             Instances trainingData = DataSource.read(trainingDataPath);
@@ -73,13 +73,39 @@ public class ModelBuilder {
                 // Convert byte array to BLOB
                 Blob modelBlob = new SerialBlob(modelBytes);
 
+                
+               
+                
+                
                 // Save metadata and model BLOB to the database
                 ModelMetadata metadata = new ModelMetadata();
                 metadata.setName(algorithmName + "_Model");
                 metadata.setModelBlob(modelBlob);
                 metadata.setPerformanceMetrics("Accuracy: " + accuracy + "%\n" + summary);
                 modelDAO.addModel(metadata);
+                
+             
+                //should be deleted aftyer sql connections are made 
+               // String modelDirectoryPath = "C:/enterprise/tmp/model/project";
 
+                
+                    // Create the model directory if it doesn't exist
+                   // File modelDirectory = new File(modelDirectoryPath);
+                    //if (!modelDirectory.exists()) {
+                    //    modelDirectory.mkdirs();
+                   // }
+                
+                 // Save the model to a binary file
+                  //  String modelFileName = algorithmName.replace(" ", "_") + "_Model.bin";
+                  //  File modelFile = new File(modelDirectory, modelFileName);
+                    
+                   // try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(modelFile))) {
+                   //     out.writeObject(classifier);
+                   // }
+                    
+                    //temp code ends here 
+                
+                
                 System.out.println("Model trained, tested, and saved to database: " + algorithmName);
             }
 

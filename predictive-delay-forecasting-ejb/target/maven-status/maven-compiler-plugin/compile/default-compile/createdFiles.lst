@@ -1,0 +1,14 @@
+ec\project\jpa\PredictionService.class
+ec\project\ml\ModelPredictor.class
+ec\project\ml\ModelBuilder.class
+ec\project\model\ModelMetadata.class
+ec\project\model\Shipment.class
+ec\project\dao\ShipmentDAOImpl.class
+ec\project\jpa\ShipmentService.class
+ec\project\jpa\UserService.class
+ec\project\dao\ModelDAOImpl.class
+ec\project\dao\UserDaoImpl.class
+ec\project\dao\UserDao.class
+ec\project\model\User.class
+ec\project\dao\ShipmentDAO.class
+ec\project\dao\ModelDAO.class

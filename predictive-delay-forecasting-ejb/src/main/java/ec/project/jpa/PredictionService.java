@@ -37,11 +37,11 @@ public class PredictionService {
         modelDAO.deleteModel(modelName);
     }
 
-    public void trainModel(String modelName, String trainingDataPath) {
-        modelBuilder.trainModel(modelName, trainingDataPath);
+    public void trainModel() {
+        modelBuilder.trainAndSaveModels();
     }
 
-    public double predict(String modelName, Object inputData) {
-        return modelPredictor.predict(modelName, inputData);
+    public double predictLateDeliveryRisk(String modelName, Long shipmentId) {
+        return modelPredictor.predictLateDeliveryRisk(modelName, shipmentId);
     }
 }

@@ -4,15 +4,28 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import java.sql.Blob;
 
 @Entity
 public class ModelMetadata {
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String name;
+    private Long id; // Changed to Long
+
+    private String name; // Separate field for model name
     private Blob modelBlob;
     private String performanceMetrics;
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -39,3 +52,4 @@ public class ModelMetadata {
         this.performanceMetrics = performanceMetrics;
     }
 }
+
