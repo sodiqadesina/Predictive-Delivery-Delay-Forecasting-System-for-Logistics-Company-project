@@ -24,7 +24,7 @@ public class ModelBuilder {
 
     public void trainAndSaveModels( ) {
     	String trainingDataPath = "C:/enterprise/workspace/Ec-project/data/train_shipment_data.arff";
-    	String testDataPath = "C:/enterprise/workspace/project/Project/Ec-project/data/test_shipment_data.arf";
+    	String testDataPath = "C:/enterprise/workspace/Ec-project/data/test_shipment_data.arff";
         try {
             // Load training and test data
             Instances trainingData = DataSource.read(trainingDataPath);

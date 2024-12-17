@@ -1,0 +1,58 @@
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="3.1">
+    <display-name>Predictive Delay Forecasting</display-name>
+
+    <!-- Admin Login Servlet -->
+    <servlet>
+        <servlet-name>AdminLoginServlet</servlet-name>
+        <servlet-class>ec.project.web.servlets.AdminLoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminLoginServlet</servlet-name>
+        <url-pattern>/admin/login</url-pattern>
+    </servlet-mapping>
+
+    <!-- User Login Servlet -->
+    <servlet>
+        <servlet-name>UserLoginServlet</servlet-name>
+        <servlet-class>ec.project.web.servlets.UserLoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserLoginServlet</servlet-name>
+        <url-pattern>/user/login</url-pattern>
+    </servlet-mapping>
+
+    <!-- User Signup Servlet -->
+    <servlet>
+        <servlet-name>UserSignupServlet</servlet-name>
+        <servlet-class>ec.project.web.servlets.UserSignupServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserSignupServlet</servlet-name>
+        <url-pattern>/user/signup</url-pattern>
+    </servlet-mapping>
+
+    <!-- Prediction Servlet -->
+    <servlet>
+        <servlet-name>PredictionServlet</servlet-name>
+        <servlet-class>ec.project.web.servlets.PredictionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PredictionServlet</servlet-name>
+        <url-pattern>/shipment/predict</url-pattern>
+    </servlet-mapping>
+
+    <!-- Session Filter -->
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>ec.project.web.filters.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Welcome File -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>
