@@ -1,112 +1,140 @@
 package ec.project.ml;
 
-import ec.project.dao.ModelDAO;
-import ec.project.model.ModelMetadata;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
+import weka.classifiers.trees.REPTree;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.filters.Filter;
+import weka.filters.unsupervised.instance.Randomize;
+import weka.filters.unsupervised.instance.RemovePercentage;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.sql.Blob;
-import javax.sql.rowset.serial.SerialBlob;
 
 @Stateless
 public class ModelBuilder {
 
-    @Inject
-    private ModelDAO modelDAO;
+    public void trainAndSaveModels() {
+    	 String datasetURL = "C:/enterprise/workspace/project/Ec-project/predictive-delay-forecasting-ejb/src/main/resources/data/shipment_data_clean.arff";
+         String modelDirectoryPath = "C:/enterprise/tmp/model/project";
+         int seed = 42; // Fixed seed for reproducibility
 
-    public void trainAndSaveModels( ) {
-    	String trainingDataPath = "C:/enterprise/workspace/Ec-project/data/train_shipment_data.arff";
-    	String testDataPath = "C:/enterprise/workspace/project/Project/Ec-project/data/test_shipment_data.arf";
-        try {
-            // Load training and test data
-            Instances trainingData = DataSource.read(trainingDataPath);
-            trainingData.setClassIndex(trainingData.numAttributes() - 1);
+         try {
+             // Load dataset from URL
+             Instances fullData = DataSource.read(datasetURL);
+             fullData.setClassIndex(fullData.attribute("late_delivery_risk").index());
 
-            Instances testData = DataSource.read(testDataPath);
-            testData.setClassIndex(testData.numAttributes() - 1);
+             // Randomize the dataset using a seed
+             Randomize randomize = new Randomize();
+             randomize.setRandomSeed(seed); 
+             randomize.setInputFormat(fullData);
+             Instances randomizedData = Filter.useFilter(fullData, randomize);
+
+             // Training Data (70%)
+             RemovePercentage filter = new RemovePercentage();
+             filter.setPercentage(70); // Remove 30% for training (keep 70%)
+             filter.setInvertSelection(true);
+             filter.setInputFormat(randomizedData);
+             Instances trainingData = Filter.useFilter(randomizedData, filter);
+
+             filter.setInvertSelection(false);
+             filter.setInputFormat(randomizedData);
+             Instances remainingData = Filter.useFilter(randomizedData, filter);
+
+             // Step 3: Validation Data (15% of the total data, i.e., 50% of remaining)
+             RemovePercentage secondFilter = new RemovePercentage();
+             secondFilter.setPercentage(50); // Remove 50%, keep 50% of remaining (15% of total)
+             secondFilter.setInvertSelection(true);
+             secondFilter.setInputFormat(remainingData);
+             Instances validationData = Filter.useFilter(remainingData, secondFilter);
+
+             // Step 4: Testing Data (Remaining 15%)
+             secondFilter.setInvertSelection(false);
+             secondFilter.setInputFormat(remainingData);
+             Instances testingData = Filter.useFilter(remainingData, secondFilter);
+
+            System.out.println("Dataset sizes:");
+            System.out.println("Training Set: " + trainingData.numInstances());
+            System.out.println("Validation Set: " + validationData.numInstances());
+            System.out.println("Testing Set: " + testingData.numInstances());
+
+            // Ensure the model directory exists
+            File modelDirectory = new File(modelDirectoryPath);
+            if (!modelDirectory.exists()) {
+                modelDirectory.mkdirs();
+            }
 
             // Initialize classifiers
             Classifier[] classifiers = {
-                new J48(),           // Decision Tree
-                new RandomForest()   // Random Forest
+                new RandomForest(),  // Random Forest
+                new REPTree()        // REPTree
             };
-
-            String[] algorithmNames = { "Decision Tree", "Random Forest" };
+            String[] algorithmNames = { "Random Forest", "REPTree" };
 
             for (int i = 0; i < classifiers.length; i++) {
                 Classifier classifier = classifiers[i];
                 String algorithmName = algorithmNames[i];
 
-                // Configure specific settings for each classifier
-                if (classifier instanceof J48) {
-                    ((J48) classifier).setUnpruned(true);
-                } else if (classifier instanceof RandomForest) {
+                // Configure specific settings for classifiers
+                if (classifier instanceof RandomForest) {
                     ((RandomForest) classifier).setNumIterations(100);
                 }
+
+                // Cross-validation (10-fold)
+                Evaluation crossValidationEval = new Evaluation(trainingData);
+                crossValidationEval.crossValidateModel(classifier, trainingData, 10, new java.util.Random(seed));
+
+                System.out.println("\nCross-Validation Results for " + algorithmName + ":");
+                System.out.println(crossValidationEval.toSummaryString());
 
                 // Train the model
                 classifier.buildClassifier(trainingData);
 
-                // Evaluate the model
-                Evaluation evaluation = new Evaluation(trainingData);
-                evaluation.evaluateModel(classifier, testData);
+                // Evaluate the model on the testing set
+                Evaluation testEval = new Evaluation(trainingData);
+                testEval.evaluateModel(classifier, testingData);
 
-                // Collect performance metrics
-                String summary = evaluation.toSummaryString();
-                double accuracy = evaluation.pctCorrect();
+                // Output evaluation metrics
+                System.out.println("\nTesting Set Results for " + algorithmName + ":");
+                System.out.println(testEval.toSummaryString());
 
-                // Serialize the model into a byte array
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
-                    objectOutputStream.writeObject(classifier);
+                // Custom accuracy calculation using binary threshold
+                int correctPredictions = 0;
+                System.out.println("Predictions vs Actual Class Values (First 20 Instances):");
+                for (int j = 0; j < testingData.numInstances(); j++) {
+                    Instance instance = testingData.instance(j);
+                    double prediction = classifier.classifyInstance(instance);
+                    double binaryPrediction = prediction >= 0.5 ? 1.0 : 0.0;
+                    double actualValue = instance.classValue();
+
+                    if (j < 20) { // Print only first 20 instances
+                        System.out.printf("Instance %d: Predicted = %.2f, Binary = %.0f, Actual = %.0f%n",
+                                j + 1, prediction, binaryPrediction, actualValue);
+                    }
+
+                    if (binaryPrediction == actualValue) {
+                        correctPredictions++;
+                    }
                 }
-                byte[] modelBytes = byteArrayOutputStream.toByteArray();
+                double customAccuracy = (double) correctPredictions / testingData.numInstances() * 100;
 
-                // Convert byte array to BLOB
-                Blob modelBlob = new SerialBlob(modelBytes);
+                // Serialize the model to a binary file
+                String modelFileName = algorithmName.replace(" ", "_") + "_Model.bin";
+                File modelFile = new File(modelDirectory, modelFileName);
 
-                
-               
-                
-                
-                // Save metadata and model BLOB to the database
-                ModelMetadata metadata = new ModelMetadata();
-                metadata.setName(algorithmName + "_Model");
-                metadata.setModelBlob(modelBlob);
-                metadata.setPerformanceMetrics("Accuracy: " + accuracy + "%\n" + summary);
-                modelDAO.addModel(metadata);
-                
-             
-                //should be deleted aftyer sql connections are made 
-               // String modelDirectoryPath = "C:/enterprise/tmp/model/project";
+                try (ObjectOutputStream fileOut = new ObjectOutputStream(new FileOutputStream(modelFile))) {
+                    fileOut.writeObject(classifier);
+                }
 
-                
-                    // Create the model directory if it doesn't exist
-                   // File modelDirectory = new File(modelDirectoryPath);
-                    //if (!modelDirectory.exists()) {
-                    //    modelDirectory.mkdirs();
-                   // }
-                
-                 // Save the model to a binary file
-                  //  String modelFileName = algorithmName.replace(" ", "_") + "_Model.bin";
-                  //  File modelFile = new File(modelDirectory, modelFileName);
-                    
-                   // try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(modelFile))) {
-                   //     out.writeObject(classifier);
-                   // }
-                    
-                    //temp code ends here 
-                
-                
-                System.out.println("Model trained, tested, and saved to database: " + algorithmName);
+                // Output final results
+                System.out.println("\nModel trained and saved to file: " + modelFile.getAbsolutePath());
+                System.out.println("Custom Accuracy (Binary Threshold): " + String.format("%.2f", customAccuracy) + "%");
             }
 
         } catch (Exception e) {
