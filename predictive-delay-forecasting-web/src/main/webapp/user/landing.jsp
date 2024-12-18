@@ -4,8 +4,19 @@
     <title>User Dashboard</title>
 </head>
 <body>
-    <h2>Welcome, ${sessionScope.user}!</h2>
+<% 
+    ec.project.model.User user = (ec.project.model.User) session.getAttribute("user"); 
+    if (user != null) {
+%>
+    <h1>Welcome, <%= user.getName() %>!</h1>
     <p>Use the form below to predict shipment delays.</p>
+<%
+    } else {
+%>
+    <p>User not logged in.</p>
+<%
+    }
+%>
     <a href="../shipment/predictionForm.jsp">Predict Shipment Delay</a>
     <br><br>
     <a href="../index.jsp">Logout</a>

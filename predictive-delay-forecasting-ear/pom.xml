@@ -11,6 +11,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>predictive-delay-forecasting-ear</artifactId>
     <packaging>ear</packaging>
+    <name>predictive-delay-forecasting-ear</name>
+    <description>EAR module for predictive delay forecasting</description>
 
     <dependencies>
         <!-- EJB Module -->
@@ -20,6 +22,7 @@
             <version>${project.version}</version>
             <type>ejb</type>
         </dependency>
+
         <!-- Web Module -->
         <dependency>
             <groupId>ec.project</groupId>
@@ -27,61 +30,53 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-        <!-- Additional Modules (if applicable) -->
-        <dependency>
-            <groupId>ec.project</groupId>
-            <artifactId>predictive-delay-forecasting-ws</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>ec.project</groupId>
-            <artifactId>predictive-delay-forecasting-rs</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
+
+        <!-- Weka Dependency: provided by WildFly -->
+       <dependency>
+	        <groupId>nz.ac.waikato.cms.weka</groupId>
+	        <artifactId>weka-stable</artifactId>
+	        <version>3.8.0</version> <!-- Replace with your Weka version -->
+	        <type>jar</type>
+	        <scope>runtime</scope>
+	    </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Maven EAR Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-ear-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <version>7</version>
-                    <defaultLibBundleDir>lib</defaultLibBundleDir>
-                    <modules>
-                        <ejbModule>
-                            <groupId>ec.project</groupId>
-                            <artifactId>predictive-delay-forecasting-ejb</artifactId>
-                        </ejbModule>
-                        <webModule>
-                            <groupId>ec.project</groupId>
-                            <artifactId>predictive-delay-forecasting-web</artifactId>
-                            <contextRoot>/predictive-delay-web</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>ec.project</groupId>
-                            <artifactId>predictive-delay-forecasting-ws</artifactId>
-                            <contextRoot>/predictive-delay-ws</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>ec.project</groupId>
-                            <artifactId>predictive-delay-forecasting-rs</artifactId>
-                            <contextRoot>/predictive-delay-rs</contextRoot>
-                        </webModule>
-                    </modules>
-                </configuration>
-            </plugin>
-            <!-- WildFly Maven Plugin -->
+            <!-- EAR Plugin: Correctly configures the EAR without unsupported manifest -->
+           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-ear-plugin</artifactId>
+            <version>3.2.0</version>
+            <configuration>
+                <modules>
+                    <ejbModule>
+                        <groupId>ec.project</groupId>
+                        <artifactId>predictive-delay-forecasting-ejb</artifactId>
+                        <bundleFileName>ec.project-predictive-delay-forecasting-ejb-1.0.0.jar</bundleFileName>
+                    </ejbModule>
+                    <webModule>
+                        <groupId>ec.project</groupId>
+                        <artifactId>predictive-delay-forecasting-web</artifactId>
+                        <contextRoot>/predictive-delay</contextRoot>
+                    </webModule>
+                </modules>
+                <defaultLibBundleDir>lib</defaultLibBundleDir>
+            </configuration>
+        </plugin>
+
+            <!-- WildFly Maven Plugin for Deployment -->
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
-                <version>${wildfly.version}</version>
+                <version>3.0.0.Final</version>
                 <configuration>
                     <skip>false</skip>
+                    <filename>${project.build.finalName}.ear</filename>
+                    <server-hostname>localhost</server-hostname>
+                    <server-port>9990</server-port>
+                    <username>admin</username>
+                    <password>cp630</password>
                 </configuration>
             </plugin>
         </plugins>

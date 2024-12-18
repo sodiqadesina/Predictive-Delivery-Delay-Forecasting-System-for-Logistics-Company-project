@@ -5,9 +5,9 @@
 </head>
 <body>
     <h2>User Login</h2>
-    <form action="UserLoginServlet" method="post">
-        <label for="name">Username:</label>
-        <input type="text" name="name" id="name" required><br><br>
+    <form action="<%= request.getContextPath() %>/UserLoginServlet" method="post">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" required><br><br> <!-- Updated name attribute -->
         <label for="password">Password:</label>
         <input type="password" name="password" id="password" required><br><br>
         <input type="submit" value="Login">

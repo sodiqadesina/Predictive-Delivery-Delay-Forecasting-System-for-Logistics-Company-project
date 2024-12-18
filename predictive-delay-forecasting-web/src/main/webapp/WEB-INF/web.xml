@@ -10,7 +10,7 @@
     </welcome-file-list>
 
     <!-- Authentication Filter -->
-    <filter>
+   <!--   <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>ec.project.web.filters.AuthFilter</filter-class>
     </filter>
@@ -19,58 +19,7 @@
         <url-pattern>/user/*</url-pattern>
         <url-pattern>/admin/*</url-pattern>
         <url-pattern>/shipment/*</url-pattern>
-    </filter-mapping>
-
-    <!-- Servlets -->
-    <!-- Admin Login Servlet -->
-    <servlet>
-        <servlet-name>AdminLoginServlet</servlet-name>
-        <servlet-class>ec.project.web.servlets.AdminLoginServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AdminLoginServlet</servlet-name>
-        <url-pattern>/AdminLoginServlet</url-pattern>
-    </servlet-mapping>
-
-    <!-- User Login Servlet -->
-    <servlet>
-        <servlet-name>UserLoginServlet</servlet-name>
-        <servlet-class>ec.project.web.servlets.UserLoginServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>UserLoginServlet</servlet-name>
-        <url-pattern>/UserLoginServlet</url-pattern>
-    </servlet-mapping>
-
-    <!-- User Signup Servlet -->
-    <servlet>
-        <servlet-name>UserSignupServlet</servlet-name>
-        <servlet-class>ec.project.web.servlets.UserSignupServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>UserSignupServlet</servlet-name>
-        <url-pattern>/UserSignupServlet</url-pattern>
-    </servlet-mapping>
-
-    <!-- Prediction Servlet -->
-    <servlet>
-        <servlet-name>PredictionServlet</servlet-name>
-        <servlet-class>ec.project.web.servlets.PredictionServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>PredictionServlet</servlet-name>
-        <url-pattern>/PredictionServlet</url-pattern>
-    </servlet-mapping>
-
-    <!-- Model Selection Servlet -->
-    <servlet>
-        <servlet-name>ModelSelectionServlet</servlet-name>
-        <servlet-class>ec.project.web.servlets.ModelSelectionServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ModelSelectionServlet</servlet-name>
-        <url-pattern>/ModelSelectionServlet</url-pattern>
-    </servlet-mapping>
+    </filter-mapping> -->
 
     <!-- Session Timeout Configuration -->
     <session-config>

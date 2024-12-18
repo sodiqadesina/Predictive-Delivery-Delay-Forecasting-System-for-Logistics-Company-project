@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/application_7.xsd" version="7">
+  <description>EAR module for predictive delay forecasting</description>
+  <display-name>predictive-delay-forecasting-ear</display-name>
+  <module>
+    <ejb>ec.project-predictive-delay-forecasting-ejb-1.0.0.jar</ejb>
+  </module>
+  <module>
+    <web>
+      <web-uri>ec.project-predictive-delay-forecasting-web-1.0.0.war</web-uri>
+      <context-root>/predictive-delay</context-root>
+    </web>
+  </module>
+  <library-directory>lib</library-directory>
+</application>

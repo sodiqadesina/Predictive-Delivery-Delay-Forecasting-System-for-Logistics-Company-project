@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Built-By: sina
+Class-Path: lib/nz.ac.waikato.cms.weka-weka-stable-3.8.0.jar lib/nz.ac
+ .waikato.cms.weka.thirdparty-java-cup-11b-2015.03.26.jar lib/nz.ac.wa
+ ikato.cms.weka.thirdparty-java-cup-11b-runtime-2015.03.26.jar lib/nz.
+ ac.waikato.cms.weka.thirdparty-bounce-0.18.jar lib/com.googlecode.mat
+ rix-toolkits-java-mtj-1.0.4.jar lib/com.github.fommil.netlib-netlib-n
+ ative_ref-osx-x86_64-1.1-natives.jar lib/com.github.fommil.netlib-nat
+ ive_ref-java-1.1.jar lib/com.github.fommil-jniloader-1.1.jar lib/com.
+ github.fommil.netlib-netlib-native_ref-linux-x86_64-1.1-natives.jar l
+ ib/com.github.fommil.netlib-netlib-native_ref-linux-i686-1.1-natives.
+ jar lib/com.github.fommil.netlib-netlib-native_ref-win-x86_64-1.1-nat
+ ives.jar lib/com.github.fommil.netlib-netlib-native_ref-win-i686-1.1-
+ natives.jar lib/com.github.fommil.netlib-netlib-native_ref-linux-armh
+ f-1.1-natives.jar lib/com.github.fommil.netlib-netlib-native_system-o
+ sx-x86_64-1.1-natives.jar lib/com.github.fommil.netlib-native_system-
+ java-1.1.jar lib/com.github.fommil.netlib-netlib-native_system-linux-
+ x86_64-1.1-natives.jar lib/com.github.fommil.netlib-netlib-native_sys
+ tem-linux-i686-1.1-natives.jar lib/com.github.fommil.netlib-netlib-na
+ tive_system-linux-armhf-1.1-natives.jar lib/com.github.fommil.netlib-
+ netlib-native_system-win-x86_64-1.1-natives.jar lib/com.github.fommil
+ .netlib-netlib-native_system-win-i686-1.1-natives.jar lib/net.sourcef
+ orge.f2j-arpack_combined_all-0.1.jar lib/com.googlecode.netlib-java-n
+ etlib-java-1.1.jar lib/com.github.fommil.netlib-core-1.1.jar lib/com.
+ mysql-mysql-connector-j-8.0.32.jar lib/com.google.protobuf-protobuf-j
+ ava-3.21.9.jar
+Created-By: Apache Maven 3.8.5
+Build-Jdk: 1.8.0_191
+
