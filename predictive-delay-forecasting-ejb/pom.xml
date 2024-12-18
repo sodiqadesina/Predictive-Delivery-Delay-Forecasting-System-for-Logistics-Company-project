@@ -6,7 +6,7 @@
     <groupId>ec.project</groupId>
     <artifactId>predictive-delay-forecasting-ejb</artifactId>
     <name>predictive-delay-forecasting-ejb</name>
-    <description>EJB module for the predictive delay forecasting project</description>
+    <description>EJB module for the predictive delay forecasting project</description> 
     <parent>
         <groupId>ec.project</groupId>
         <artifactId>predictive-delay-forecasting</artifactId>
@@ -52,6 +52,12 @@
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+		    <groupId>org.jboss.spec.javax.ejb</groupId>
+		    <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+		    <scope>provided</scope>
+		</dependency>
+		        
 
         <!-- MySQL Connector -->
         <dependency>

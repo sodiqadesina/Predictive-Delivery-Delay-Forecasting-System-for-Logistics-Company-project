@@ -1,33 +1,45 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Model Selection</title>
 </head>
 <body>
-    <h2>Select Model to Deploy</h2>
-    <form action="ModelSelectionServlet" method="post">
-        <table border="1">
-            <tr>
-                <th>Model Name</th>
-                <th>Performance Metrics</th>
-                <th>Select</th>
-            </tr>
-            <c:forEach var="model" items="${models}">
-                <tr>
-                    <td>${model.name}</td>
-                    <td>${model.performanceMetrics}</td>
-                    <td>
-                        <input type="radio" name="selectedModel" value="${model.name}" required>
-                    </td>
-                </tr>
-            </c:forEach>
-        </table>
-        <br>
-        <input type="submit" value="Deploy Selected Model">
-    </form>
+    <h1>Model Selection</h1>
     <c:if test="${not empty error}">
-        <p style="color: red;">${error}</p>
+        <div style="color: red;">
+            <p>${error}</p>
+        </div>
     </c:if>
+    <c:if test="${not empty success}">
+        <div style="color: green;">
+            <p>${success}</p>
+        </div>
+    </c:if>
+
+    <form action="/admin/ModelSelectionServlet" method="post">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Model Name</th>
+                    <th>Performance Metrics</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach items="${models}" var="model">
+                    <tr>
+                        <td>
+                            <input type="radio" name="selectedModel" value="${model.name}" />
+                        </td>
+                        <td>${model.name}</td>
+                        <td>${model.performanceMetrics}</td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+        <br/>
+        <input type="submit" value="Deploy Selected Model" />
+    </form>
 </body>
 </html>

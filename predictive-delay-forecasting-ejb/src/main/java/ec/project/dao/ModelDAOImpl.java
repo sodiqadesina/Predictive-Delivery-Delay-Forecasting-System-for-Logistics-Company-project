@@ -2,12 +2,13 @@ package ec.project.dao;
 
 import ec.project.model.ModelMetadata;
 
-import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
-@Stateful
+@Stateless
 public class ModelDAOImpl implements ModelDAO {
 
     @PersistenceContext(unitName = "primary")
@@ -21,18 +22,24 @@ public class ModelDAOImpl implements ModelDAO {
     @Override
     public ModelMetadata getModelByName(String modelName) {
         try {
-            return em.createQuery(
-                "SELECT m FROM ModelMetadata m WHERE m.name = :modelName", ModelMetadata.class)
-                .setParameter("modelName", modelName)
-                .getSingleResult();
+            TypedQuery<ModelMetadata> query = em.createQuery(
+                "SELECT m FROM ModelMetadata m WHERE m.name = :modelName", ModelMetadata.class);
+            query.setParameter("modelName", modelName);
+            return query.getSingleResult();
         } catch (Exception e) {
-            return null;  // Handle exception, e.g., model not found
+            e.printStackTrace();
+            return null;
         }
     }
 
     @Override
     public List<ModelMetadata> getAllModels() {
-        return em.createQuery("SELECT m FROM ModelMetadata m", ModelMetadata.class).getResultList();
+        try {
+            return em.createQuery("SELECT m FROM ModelMetadata m", ModelMetadata.class).getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -40,26 +47,31 @@ public class ModelDAOImpl implements ModelDAO {
         try {
             ModelMetadata model = getModelByName(modelName);
             if (model != null) {
-                em.remove(model);
+                em.remove(em.contains(model) ? model : em.merge(model));
             }
         } catch (Exception e) {
-            // Handle exception, e.g., model not found
+            e.printStackTrace();
         }
     }
 
     @Override
     public void updateModel(ModelMetadata model) {
-        em.merge(model); // Merge updates into the database
+        try {
+            em.merge(model);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public ModelMetadata getDeployedModel() {
         try {
-            return em.createQuery(
-                "SELECT m FROM ModelMetadata m WHERE m.deployed = true", ModelMetadata.class)
-                .getSingleResult();
+            TypedQuery<ModelMetadata> query = em.createQuery(
+                "SELECT m FROM ModelMetadata m WHERE m.deployed = true", ModelMetadata.class);
+            return query.getSingleResult();
         } catch (Exception e) {
-            return null; // No deployed model found
+            e.printStackTrace();
+            return null;
         }
     }
 }

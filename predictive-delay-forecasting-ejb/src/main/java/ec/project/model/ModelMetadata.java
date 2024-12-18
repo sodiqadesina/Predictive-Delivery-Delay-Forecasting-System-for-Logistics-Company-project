@@ -1,5 +1,7 @@
 package ec.project.model;
+import javax.persistence.Table;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,6 +10,7 @@ import javax.persistence.Lob;
 import java.sql.Blob;
 
 @Entity
+@Table(name = "modelmetadata")
 public class ModelMetadata {
 
     @Id
@@ -38,6 +41,7 @@ public class ModelMetadata {
     }
 
     @Lob
+    @Column(name = "modelBlob", columnDefinition = "BLOB")
     public Blob getModelBlob() {
         return modelBlob;
     }
@@ -62,3 +66,4 @@ public class ModelMetadata {
         this.deployed = deployed;
     }
 }
+

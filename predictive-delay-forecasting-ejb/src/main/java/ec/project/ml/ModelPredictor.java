@@ -12,8 +12,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import javax.enterprise.context.ApplicationScoped;
 
-@Stateless
+@ApplicationScoped
 public class ModelPredictor {
 
     public double predictLateDeliveryRisk(String modelFilePath, String type, double daysForShippingReal, double daysForShippingScheduled,

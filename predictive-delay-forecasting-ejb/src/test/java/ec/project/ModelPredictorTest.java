@@ -23,7 +23,7 @@ public class ModelPredictorTest {
         long startTime = System.currentTimeMillis();
         try {
             // Arrange: Load the saved model
-            String modelFilePath = "C:/enterprise/tmp/model/project/Random_Forest_Model.bin";
+            String modelFilePath = "C:/enterprise/tmp/model/project/REPTree_Model.bin";
             File modelFile = new File(modelFilePath);
             if (!modelFile.exists()) {
                 fail("Model file does not exist at: " + modelFilePath);

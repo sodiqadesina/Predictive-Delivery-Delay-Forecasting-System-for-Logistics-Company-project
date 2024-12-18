@@ -7,127 +7,202 @@ import ec.project.model.ModelMetadata;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 
 @Stateless
 public class PredictionService {
 
-    @Inject
+    @EJB
     private ModelDAO modelDAO;
 
-    @Inject
+    @EJB
     private ModelBuilder modelBuilder;
 
     @Inject
     private ModelPredictor modelPredictor;
 
-    private static final String MODEL_FILE_PATH = "C:/enterprise/tmp/model/project/Random_Forest_Model.bin";
+    private static final String MODEL_DIR_PATH = "C:/enterprise/tmp/model/project";
+    private static final Logger logger = Logger.getLogger(PredictionService.class.getName());
 
     /**
      * Add a new model to the database.
-     * 
-     * @param model Model metadata to add
      */
     public void addModel(ModelMetadata model) {
-        modelDAO.addModel(model);
+        try {
+            modelDAO.addModel(model);
+            logger.info("Model added successfully: " + model.getName());
+        } catch (Exception e) {
+            logger.severe("Error adding model: " + e.getMessage());
+            throw e; // Re-throw exception to inform callers
+        }
     }
 
     /**
      * Retrieve a model by name.
-     * 
-     * @param modelName Name of the model to retrieve
-     * @return ModelMetadata object
      */
     public ModelMetadata getModelByName(String modelName) {
-        return modelDAO.getModelByName(modelName);
+        try {
+            return modelDAO.getModelByName(modelName);
+        } catch (Exception e) {
+            logger.severe("Error retrieving model by name: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
      * Retrieve all models from the database.
-     * 
-     * @return List of all ModelMetadata objects
      */
     public List<ModelMetadata> getAllModels() {
-        return modelDAO.getAllModels();
+        try {
+            return modelDAO.getAllModels();
+        } catch (Exception e) {
+            logger.severe("Error retrieving all models: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
      * Delete a model by name.
-     * 
-     * @param modelName Name of the model to delete
      */
     public void deleteModel(String modelName) {
-        modelDAO.deleteModel(modelName);
+        try {
+            modelDAO.deleteModel(modelName);
+            logger.info("Model deleted successfully: " + modelName);
+        } catch (Exception e) {
+            logger.severe("Error deleting model: " + e.getMessage());
+            throw e; // Re-throw to handle at a higher level
+        }
     }
 
     /**
      * Train and save models using the ModelBuilder.
      */
     public void trainModel() {
-        modelBuilder.trainAndSaveModels();
+        try {
+            modelBuilder.trainAndSaveModels();
+        } catch (Exception e) {
+            logger.severe("Error during model training: " + e.getMessage());
+            throw e; // Propagate exception
+        }
     }
 
     /**
      * Deploy a specific model as the active prediction model.
-     * 
-     * @param modelName Name of the model to deploy
      */
     public void deployModel(String modelName) {
-        List<ModelMetadata> allModels = modelDAO.getAllModels();
-        for (ModelMetadata model : allModels) {
-            if (model.getName().equals(modelName)) {
-                model.setDeployed(true);
-            } else {
-                model.setDeployed(false);
+        try {
+            List<ModelMetadata> allModels = modelDAO.getAllModels();
+            if (allModels == null || allModels.isEmpty()) {
+                throw new IllegalStateException("No models available to deploy.");
             }
-            modelDAO.updateModel(model);
+
+            for (ModelMetadata model : allModels) {
+                model.setDeployed(model.getName().equals(modelName));
+                modelDAO.updateModel(model);
+            }
+            logger.info("Model deployed successfully: " + modelName);
+        } catch (Exception e) {
+            logger.severe("Error deploying model: " + e.getMessage());
+            throw e;
         }
     }
 
     /**
      * Retrieve the currently deployed model.
-     * 
-     * @return Deployed ModelMetadata object
      */
     public ModelMetadata getDeployedModel() {
-        return modelDAO.getAllModels().stream()
-                .filter(ModelMetadata::isDeployed)
-                .findFirst()
-                .orElse(null);
+        try {
+            return modelDAO.getDeployedModel();
+        } catch (Exception e) {
+            logger.severe("Error retrieving deployed model: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
      * Predict late delivery risk using custom shipment features and the specified model.
-     * 
-     * @param type                Shipment type
-     * @param daysForShippingReal Real days for shipping
-     * @param daysForShippingScheduled Scheduled days for shipping
-     * @param benefitPerOrder     Benefit per order
-     * @param salesPerCustomer    Sales per customer
-     * @param latitude            Latitude of the shipment
-     * @param longitude           Longitude of the shipment
-     * @param shippingMode        Shipping mode
-     * @param orderStatus         Order status
-     * @param orderRegion         Order region
-     * @param orderCountry        Order country
-     * @param orderCity           Order city
-     * @param market              Market type
-     * @param deliveryStatus      Delivery status
-     * @param orderDay            Day of the order
-     * @param orderMonth          Month of the order
-     * @param orderYear           Year of the order
-     * @param shippingDay         Day of the shipment
-     * @param shippingMonth       Month of the shipment
-     * @param shippingYear        Year of the shipment
-     * @return Predicted late delivery risk score
      */
     public double predictLateDeliveryRisk(String type, double daysForShippingReal, double daysForShippingScheduled,
                                           double benefitPerOrder, double salesPerCustomer, double latitude, double longitude,
                                           String shippingMode, String orderStatus, String orderRegion, String orderCountry,
                                           String orderCity, String market, String deliveryStatus, int orderDay, int orderMonth,
                                           int orderYear, int shippingDay, int shippingMonth, int shippingYear) {
-        return modelPredictor.predictLateDeliveryRisk(MODEL_FILE_PATH, type, daysForShippingReal, daysForShippingScheduled,
-                benefitPerOrder, salesPerCustomer, latitude, longitude, shippingMode, orderStatus, orderRegion, orderCountry,
-                orderCity, market, deliveryStatus, orderDay, orderMonth, orderYear, shippingDay, shippingMonth, shippingYear);
+        try {
+            String modelPath = MODEL_DIR_PATH + "/Random_Forest_Model.bin";
+            return modelPredictor.predictLateDeliveryRisk(modelPath, type, daysForShippingReal, daysForShippingScheduled,
+                                                          benefitPerOrder, salesPerCustomer, latitude, longitude, shippingMode,
+                                                          orderStatus, orderRegion, orderCountry, orderCity, market, 
+                                                          deliveryStatus, orderDay, orderMonth, orderYear, shippingDay,
+                                                          shippingMonth, shippingYear);
+        } catch (Exception e) {
+            logger.severe("Error predicting late delivery risk: " + e.getMessage());
+            return Double.NaN; // Return NaN to indicate failure
+        }
+    }
+
+    /**
+     * Initialize models from the directory and store them in the database.
+     */
+    public void initializeModels() {
+        logger.info("Initializing models from directory: " + MODEL_DIR_PATH);
+        File modelDir = new File(MODEL_DIR_PATH);
+
+        if (modelDir.exists() && modelDir.isDirectory()) {
+            File[] modelFiles = modelDir.listFiles();
+
+            if (modelFiles != null) {
+                for (File modelFile : modelFiles) {
+                    try {
+                        String fileName = modelFile.getName();
+
+                        // Skip metrics.txt
+                        if ("metrics.txt".equalsIgnoreCase(fileName)) {
+                            logger.info("Skipping metrics file: " + fileName);
+                            continue;
+                        }
+
+                        // Check if model already exists in the database
+                        if (modelDAO.getModelByName(fileName) != null) {
+                            logger.info("Model already exists in database: " + fileName);
+                            continue; // Skip processing for existing models
+                        }
+
+                        // Read model file content into a Blob
+                        byte[] fileContent = Files.readAllBytes(modelFile.toPath());
+                        Blob modelBlob = new SerialBlob(fileContent);
+
+                        // Read performance metrics from metrics.txt if available
+                        File metricsFile = new File(modelDir, "metrics.txt");
+                        String performanceMetrics = metricsFile.exists() 
+                                ? new String(Files.readAllBytes(metricsFile.toPath())).trim()
+                                : "Default Metrics";
+
+                        // Create and save ModelMetadata
+                        ModelMetadata model = new ModelMetadata();
+                        model.setName(fileName);
+                        model.setModelBlob(modelBlob);
+                        model.setPerformanceMetrics(performanceMetrics);
+                        model.setDeployed(false);
+
+                        modelDAO.addModel(model);
+                        logger.info("Successfully added model: " + fileName);
+                    } catch (IOException | SQLException e) {
+                        logger.severe("Error processing model file: " + modelFile.getName() + " - " + e.getMessage());
+                    }
+                }
+            } else {
+                logger.warning("No model files found in directory.");
+            }
+        } else {
+            logger.warning("Model directory does not exist or is not a directory: " + MODEL_DIR_PATH);
+        }
     }
 }
