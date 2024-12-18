@@ -12,5 +12,6 @@ ec\project\ml\ModelPredictor.class
 ec\project\model\ModelMetadata.class
 ec\project\jpa\ShipmentService.class
 ec\project\jpa\UserService.class
+ec\project\jpa\UserServiceLocal.class
 ec\project\dao\ModelDAOImpl.class
 ec\project\dao\UserDao.class
