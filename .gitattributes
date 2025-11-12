@@ -1,0 +1,12 @@
+.# Treat HTML, CSS, and JS as first-class languages
+*.html linguist-detectable=true
+*.css linguist-detectable=true
+*.js linguist-detectable=true
+
+# Include files in webapp directory for language stats
+predictive-delay-forecasting-web/src/main/webapp/** linguist-detectable=true
+
+# Ignore data or config files
+data/** linguist-vendored
+*.xml linguist-vendored
+*.properties linguist-vendored
